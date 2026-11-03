@@ -97,23 +97,40 @@ flowchart TD
 ## Mathematical Formulation & Loss Function
 
 ### 1. Mixture Likelihood Objective
+
 Unlike standard routing that sends tokens to a single hard-selected expert, EAN trains the entire ensemble end-to-end under a **Mixture of Experts log-likelihood** objective ([Jacobs et al., 1991](https://direct.mit.edu/neco/article/3/1/79/5643/Adaptive-Mixtures-of-Local-Experts)):
-$$\mathcal{L}_{\text{mix}} = - \frac{1}{N} \sum_{t=1}^N \log \left( \sum_{i=1}^n \alpha_{i,t} \, p_i(y_t \mid y_{<t}, x) \right)$$
-where:
-$$\alpha_{i,t} = \frac{\exp \left( f(h_{i,t}, \bar{h}_t, e_t, \mathbf{e}_{\text{head}, i}) + \epsilon_{i,t} \right)}{\sum_{j=1}^n \exp \left( f(h_{j,t}, \bar{h}_t, e_t, \mathbf{e}_{\text{head}, j}) + \epsilon_{j,t} \right)}$$
-- $h_{i,t} \in \mathbb{R}^D$ is the final hidden state of head $i$ at token step $t$.
-- $\bar{h}_t = \frac{1}{n} \sum_{j=1}^n h_{j,t}$ provides global consensus context across all heads.
-- $e_t \in \mathbb{R}^{D_e}$ is the decoupled evidence context vector from DeBERTa-v3.
-- $\mathbf{e}_{\text{head}, i}$ is a learned head identity bias vector.
-- $\epsilon \sim \mathcal{N}(0, \sigma_t^2)$ is exploration noise during training, annealed linearly from $\sigma_0 = 0.5$ to $0$.
+
+```math
+\mathcal{L}_{\text{mix}} = -\frac{1}{N} \sum_{t=1}^{N} \log \left( \sum_{i=1}^{n} \alpha_{i,t} \, p_i(y_t \mid y_{<t}, x) \right)
+```
+
+where the gate weights are:
+
+```math
+\alpha_{i,t} = \frac{\exp\left( f(h_{i,t}, \bar{h}_t, e_t, \mathbf{e}_{\text{head},i}) + \epsilon_{i,t} \right)}{\sum_{j=1}^{n} \exp\left( f(h_{j,t}, \bar{h}_t, e_t, \mathbf{e}_{\text{head},j}) + \epsilon_{j,t} \right)}
+```
+
+- $`h_{i,t} \in \mathbb{R}^{D}`$ is the final hidden state of head $`i`$ at token step $`t`$.
+- $`\bar{h}_t = \frac{1}{n} \sum_{j=1}^{n} h_{j,t}`$ provides global consensus context across all heads.
+- $`e_t \in \mathbb{R}^{D_e}`$ is the decoupled evidence context vector from DeBERTa-v3.
+- $`\mathbf{e}_{\text{head},i}`$ is a learned head identity bias vector.
+- $`\epsilon \sim \mathcal{N}(0, \sigma_t^2)`$ is exploration noise during training, annealed linearly from $`\sigma_0 = 0.5`$ to $`0`$.
 
 ### 2. Individual Head Competence Regularization
-To guarantee that no head becomes a degenerate "dead" module, we add an auxiliary individual NLL regularization term ($w_{\text{head}} = 0.05$):
-$$\mathcal{L}_{\text{heads}} = - \frac{1}{n N} \sum_{i=1}^n \sum_{t=1}^N \log p_i(y_t \mid y_{<t}, x)$$
+
+To guarantee that no head becomes a degenerate "dead" module, we add an auxiliary individual NLL regularization term ($`w_{\text{head}} = 0.05`$):
+
+```math
+\mathcal{L}_{\text{heads}} = -\frac{1}{nN} \sum_{i=1}^{n} \sum_{t=1}^{N} \log p_i(y_t \mid y_{<t}, x)
+```
 
 ### 3. Load Balancing & Anti-Collapse Regularization
-To prevent gate collapse onto a single dominant head ([Shazeer et al., 2017](https://arxiv.org/abs/1701.06538); [Fedus et al., 2021](https://arxiv.org/abs/2101.03961)), we penalize the Kullback-Leibler divergence between the batch-average gating distribution $\bar{\alpha}_i = \frac{1}{N} \sum_{t=1}^N \alpha_{i,t}$ and the uniform distribution $\mathcal{U} = \frac{1}{n}$ ($w_{\text{balance}} = 0.02$):
-$$\mathcal{L}_{\text{balance}} = \sum_{i=1}^n \bar{\alpha}_i \left( \log \bar{\alpha}_i + \ln n \right)$$
+
+To prevent gate collapse onto a single dominant head ([Shazeer et al., 2017](https://arxiv.org/abs/1701.06538); [Fedus et al., 2021](https://arxiv.org/abs/2101.03961)), we penalize the Kullback-Leibler divergence between the batch-average gating distribution $`\bar{\alpha}_i = \frac{1}{N} \sum_{t=1}^{N} \alpha_{i,t}`$ and the uniform distribution $`\mathcal{U} = \frac{1}{n}`$ ($`w_{\text{balance}} = 0.02`$):
+
+```math
+\mathcal{L}_{\text{balance}} = \sum_{i=1}^{n} \bar{\alpha}_i \left( \log \bar{\alpha}_i + \log n \right)
+```
 
 ### 4. Total Optimization Objective
 $$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{mix}} + 0.05 \, \mathcal{L}_{\text{heads}} + 0.02 \, \mathcal{L}_{\text{balance}}$$
