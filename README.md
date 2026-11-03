@@ -101,7 +101,7 @@ flowchart TD
 Unlike standard routing that sends tokens to a single hard-selected expert, EAN trains the entire ensemble end-to-end under a **Mixture of Experts log-likelihood** objective ([Jacobs et al., 1991](https://direct.mit.edu/neco/article/3/1/79/5643/Adaptive-Mixtures-of-Local-Experts)):
 
 ```math
-\mathcal{L}_{\text{mix}} = -\frac{1}{N} \sum_{t=1}^{N} \log \left( \sum_{i=1}^{n} \alpha_{i,t} \, p_i(y_t \mid y_{<t}, x) \right)
+\mathcal{L}_{\text{mix}} = -\frac{1}{N} \sum_{t=1}^{N} \log \left( \sum_{i=1}^{n} \alpha_{i,t} \, p_i(y_t \mid y_{\lt t}, x) \right)
 ```
 
 where the gate weights are:
@@ -121,7 +121,7 @@ where the gate weights are:
 To guarantee that no head becomes a degenerate "dead" module, we add an auxiliary individual NLL regularization term ($`w_{\text{head}} = 0.05`$):
 
 ```math
-\mathcal{L}_{\text{heads}} = -\frac{1}{nN} \sum_{i=1}^{n} \sum_{t=1}^{N} \log p_i(y_t \mid y_{<t}, x)
+\mathcal{L}_{\text{heads}} = -\frac{1}{nN} \sum_{i=1}^{n} \sum_{t=1}^{N} \log p_i(y_t \mid y_{\lt t}, x)
 ```
 
 ### 3. Load Balancing & Anti-Collapse Regularization
