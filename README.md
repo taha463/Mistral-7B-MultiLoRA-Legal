@@ -1,7 +1,7 @@
 # Fine-Tuning Mistral-7B with Multi-LoRA & Evidence-Guided Arbitration
 ### *Parameter-Efficient Legal Reasoning via 3-Head Multi-LoRA Fine-Tuning & Token Probability Arbitration*
 
-[![CI](https://github.com/taha463/Mizan-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/taha463/Mizan-AI/actions)
+[![CI](https://github.com/taha463/Mistral-7B-MultiLoRA-Legal/actions/workflows/ci.yml/badge.svg)](https://github.com/taha463/Mistral-7B-MultiLoRA-Legal/actions)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](requirements.txt)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.1+-ee4c2c.svg)](https://pytorch.org/)

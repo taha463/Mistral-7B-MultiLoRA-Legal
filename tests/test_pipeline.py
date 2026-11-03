@@ -1,6 +1,12 @@
 """
 Unit and integration tests for Mistral-7B Multi-LoRA & Evidence Arbitration pipeline.
 """
+import os
+import sys
+
+# Ensure repository root is always on sys.path regardless of how pytest is invoked
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import torch
 import torch.nn.functional as F
 import pytest
@@ -72,3 +78,4 @@ def test_ean_loss_computation():
     assert head_nlls.shape == (n_heads,)
     assert mean_alpha.shape == (n_heads,)
     assert torch.isclose(mean_alpha.sum(), torch.tensor(1.0), atol=1e-5)
+

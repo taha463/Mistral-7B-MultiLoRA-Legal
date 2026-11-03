@@ -69,7 +69,7 @@ from transformers import (
     AutoModel,
     BitsAndBytesConfig,
 )
-from rouge_score import rouge_scorer
+from rouge_score import rouge_scorersee 
 
 # ---------------------------------------------------------------
 # CONFIG
@@ -121,7 +121,7 @@ VAL_ROWS = 6 if SMOKE else 160
 EVAL_ROWS = 4 if SMOKE else 120
 MAX_NEW = 24 if SMOKE else 128
 
-DEVICE = "cuda"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def seed_all(s):
@@ -163,7 +163,7 @@ def make_json_safe(obj):
 
 
 _rouge = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
-
+see
 
 def token_f1(pred, ref):
     p, g = norm(pred).split(), norm(ref).split()
