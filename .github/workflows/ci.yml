@@ -1,0 +1,64 @@
+name: CI/CD Quality & Diagnostic Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-verify:
+    name: Code Quality, Unit Tests & Plot Verification
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install CPU PyTorch & Verified Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Install CPU torch first to keep CI lightweight and fast
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+          pip install pytest flake8
+
+      - name: Python Syntax & Compilation Verification
+        run: |
+          python -m py_compile ean_legal.py make_plots.py draw_architecture.py
+
+      - name: Flake8 Code Style Check
+        run: |
+          # Stop build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Run Unit & Integration Test Suite
+        run: |
+          pytest tests/test_pipeline.py -v
+
+      - name: Test Architecture Diagram Generation
+        run: |
+          python draw_architecture.py
+          test -f figures/00_architecture_diagram.png
+          test -f figures/00_architecture_diagram.pdf
+
+      - name: Test Publication Diagnostic Plot Generation
+        run: |
+          python make_plots.py --out ./
+          test -f figures/01_training_curves.png
+          test -f figures/02_head_emergence.png
+          test -f figures/03_specialisation.png
+          test -f figures/04_token_gate_heatmap.png
+          test -f figures/05_method_comparison.png
+          test -f figures/06_gate_vs_disagreement.png
+          test -f figures/07_per_source.png

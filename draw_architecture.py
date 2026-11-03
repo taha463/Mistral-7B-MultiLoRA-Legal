@@ -46,10 +46,10 @@ def create_architecture_diagram(out_dir="figures"):
                                     connectionstyle=f"arc3,rad={rad}"))
 
     # Title Banner
-    ax.text(50, 96, "Expert Arbitration Network (EAN) Architecture",
-            fontsize=18, fontweight="bold", color=INK, ha="center", va="top")
-    ax.text(50, 92.5, "Evidence-Guided Gated Multi-LoRA Ensembling with Linear Token Probability Arbitration",
-            fontsize=10.5, color=MUTED, ha="center", va="top")
+    ax.text(50, 96, "Fine-Tuning Mistral-7B Parameter Model with Multi-LoRA",
+            fontsize=16.5, fontweight="bold", color=INK, ha="center", va="top")
+    ax.text(50, 92.2, "Evidence-Guided Multi-Head LoRA Fine-Tuning on 7B LLM with Token Probability Arbitration",
+            fontsize=10, color=MUTED, ha="center", va="top")
 
     # =========================================================================
     # 1. INPUT STREAM (Left)
@@ -67,19 +67,19 @@ def create_architecture_diagram(out_dir="figures"):
     # 2. GENERATIVE LATENT BACKBONE (Top Middle)
     # =========================================================================
     draw_box(23, 56, 19, 25, "#F8FAFC", FROZEN_C, border_w=2.0)
-    ax.text(32.5, 77.5, "Shared Latent Backbone", fontsize=10.5, fontweight="bold", color=FROZEN_C, ha="center")
-    ax.text(32.5, 74.5, "Mistral-7B-Instruct-v0.2", fontsize=9.5, fontweight="bold", color=INK, ha="center")
+    ax.text(32.5, 77.5, "Shared 7B Latent Backbone", fontsize=10, fontweight="bold", color=FROZEN_C, ha="center")
+    ax.text(32.5, 74.5, "Mistral-7B (7B Parameters)", fontsize=9.2, fontweight="bold", color=INK, ha="center")
     ax.text(32.5, 66, "• Frozen 4-bit NF4 Quant\n• Double Quantization\n• Flash Attention (SDPA)\n• 32 Transformer Blocks",
             fontsize=8, color=MUTED, ha="center")
     draw_box(25, 57.5, 15, 4.5, "#E2E8F0", FROZEN_C, border_w=1, radius=0.8)
-    ax.text(32.5, 59.7, "[ FROZEN WEIGHTS ]", fontsize=7.5, fontweight="bold", color=FROZEN_C, ha="center", va="center")
+    ax.text(32.5, 59.7, "[ FROZEN 7B BASE ]", fontsize=7.5, fontweight="bold", color=FROZEN_C, ha="center", va="center")
 
     # =========================================================================
     # 3. MULTI-LoRA INTERPRETATION HEADS (Middle-Right Top)
     # =========================================================================
     draw_box(46, 51, 23, 34, "#FAFAFA", FAINT, border_w=1.5)
-    ax.text(57.5, 82, "n Parallel LoRA Interpretation Heads", fontsize=10, fontweight="bold", color=INK, ha="center")
-    ax.text(57.5, 79.5, "Single forward pass (head-major batch) · r=16, α=32", fontsize=7.5, color=MUTED, ha="center")
+    ax.text(57.5, 82, "Multi-LoRA Fine-Tuned Heads", fontsize=10, fontweight="bold", color=INK, ha="center")
+    ax.text(57.5, 79.5, "3 Parallel LoRA Adapters on Mistral-7B (r=16, α=32)", fontsize=7.3, color=MUTED, ha="center")
 
     # Head 0
     draw_box(48, 70, 19, 7.5, "#FEF2F2", H0_C, border_w=1.6)
@@ -175,3 +175,4 @@ def create_architecture_diagram(out_dir="figures"):
 
 if __name__ == "__main__":
     create_architecture_diagram("figures")
+

@@ -1,10 +1,11 @@
-# Expert Arbitration Network (EAN) for Legal Reasoning
-### *Evidence-Guided Gated Multi-LoRA Ensembling on Frozen Large Language Models*
+# Fine-Tuning Mistral-7B with Multi-LoRA & Evidence-Guided Arbitration
+### *Parameter-Efficient Legal Reasoning via 3-Head Multi-LoRA Fine-Tuning & Token Probability Arbitration*
 
+[![CI](https://github.com/taha463/Mizan-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/taha463/Mizan-AI/actions)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](requirements.txt)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.1+-ee4c2c.svg)](https://pytorch.org/)
-[![Base Model](https://img.shields.io/badge/Base_LLM-Mistral--7B--Instruct--v0.2-green.svg)](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
+[![Base Model](https://img.shields.io/badge/Base_LLM-Mistral--7B--Instruct--v0.2_(7B_Params)-green.svg)](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2)
 [![Evidence Encoder](https://img.shields.io/badge/Encoder-DeBERTa--v3--base-orange.svg)](https://huggingface.co/microsoft/deberta-v3-base)
 [![Dataset](https://img.shields.io/badge/Dataset-LawInstruct-purple.svg)](https://huggingface.co/datasets/lawinstruct/lawinstruct)
 
@@ -14,20 +15,20 @@
 
 Complex legal reasoning tasks require simultaneously balancing statutory interpretation, factual evidence alignment, jurisdictional nuances, and rigorous argumentative fidelity. Monolithic large language models (LLMs) often suffer from conflicting gradient objectives when asked to master disparate legal domains, while conventional Mixture-of-Experts (MoE) architectures route representations inside hidden layer activations—frequently encountering expert collapse and catastrophic forgetting without grounded external evidence.
 
-The **Expert Arbitration Network (EAN)** introduces a parameter-efficient, modular architecture that couples:
-1. **A Shared Frozen Latent Backbone**: A single 4-bit quantized `Mistral-7B-Instruct-v0.2` generative model.
-2. **$n$ Independent Interpretation Heads**: End-to-end trained LoRA adapters whose domain specialization emerges naturally without predefined task roles via mixture-of-experts likelihood training ([Jacobs et al., 1991](https://direct.mit.edu/neco/article/3/1/79/5643/Adaptive-Mixtures-of-Local-Experts)).
+This project implements **Multi-LoRA Fine-Tuning of a 7-Billion Parameter Model (Mistral-7B) with Evidence-Guided Arbitration (EAN)**. Rather than relying on a monolithic fine-tune, the system couples:
+1. **A Shared 7B Parameter Frozen Latent Backbone**: A 4-bit quantized `Mistral-7B-Instruct-v0.2` generative base model (frozen parameters).
+2. **$n=3$ Independent Multi-LoRA Fine-Tuned Heads**: End-to-end trained LoRA adapters ($r=16, \alpha=32$ injected into all 224 projection matrices) whose domain specialization emerges naturally without predefined task roles via mixture-of-experts likelihood training ([Jacobs et al., 1991](https://direct.mit.edu/neco/article/3/1/79/5643/Adaptive-Mixtures-of-Local-Experts)).
 3. **A Decoupled Evidence Encoder**: A bidirectional `microsoft/deberta-v3-base` network extracting dense contextual representations of statutory authorities, facts, and jurisdiction.
-4. **Evidence-Guided Trust Gating**: A comparative arbitration network that observes all heads' hidden states simultaneously alongside the evidence vector to allocate dynamic trust weights $\alpha_{i,t}$.
+4. **Evidence-Guided Trust Gating**: A comparative arbitration network (`EvidenceGate`) that observes all heads' hidden states simultaneously alongside the evidence vector to allocate dynamic trust weights $\alpha_{i,t}$.
 5. **Linear Probability Fusion**: Arbitration performed strictly in token probability space:
    $$P(y_t \mid y_{<t}, x) = \sum_{i=1}^n \alpha_{i,t} \, P_i(y_t \mid y_{<t}, x)$$
    both during training and during autoregressive decoding.
 
 ---
 
-## System Architecture
+## Model Architecture: Fine-Tuned Mistral-7B with Multi-LoRA & Evidence Arbitration
 
-![EAN System Architecture](figures/00_architecture_diagram.png)
+![Fine-Tuning Mistral-7B Parameter Model with Multi-LoRA](figures/00_architecture_diagram.png)
 
 ```mermaid
 flowchart TD

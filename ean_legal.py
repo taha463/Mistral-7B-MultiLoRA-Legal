@@ -495,7 +495,6 @@ HISTORY = {"n_heads": N_HEADS, "smoke": SMOKE,
 
 
 def save_history():
-    with open(os.path.join(METRICS_DIR, "train_history.json"), "w") as f:
     with open(os.path.join(METRICS_DIR, "train_history.json"), "w", encoding="utf-8") as f:
         json.dump(make_json_safe(HISTORY), f)
 
@@ -793,7 +792,6 @@ def evaluate(rows, name):
             "mean_alpha_per_head": np.mean([a["mean_alpha"] for a in alpha_stats], 0).round(3).tolist(),
             "mean_alpha_entropy(max=%.3f)" % math.log(N_HEADS): float(np.mean([a["alpha_entropy"] for a in alpha_stats])),
         }
-    with open(os.path.join(RESULTS, f"{name}.json"), "w") as f:
     with open(os.path.join(RESULTS, f"{name}.json"), "w", encoding="utf-8") as f:
         json.dump(make_json_safe({"n_heads": N_HEADS, "metrics": table, "samples": saved}), f, ensure_ascii=False)
     print(f"\n=== {name} ===")
