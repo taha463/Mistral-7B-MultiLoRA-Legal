@@ -69,7 +69,7 @@ from transformers import (
     AutoModel,
     BitsAndBytesConfig,
 )
-from rouge_score import rouge_scorersee 
+from rouge_score import rouge_scorer
 
 # ---------------------------------------------------------------
 # CONFIG
@@ -163,7 +163,6 @@ def make_json_safe(obj):
 
 
 _rouge = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
-see
 
 def token_f1(pred, ref):
     p, g = norm(pred).split(), norm(ref).split()
