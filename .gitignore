@@ -1,0 +1,27 @@
+# PyTorch checkpoints and model weights (prevent GitHub 100MB file limit errors)
+*.pt
+*.bin
+*.safetensors
+*.ckpt
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Jupyter / IDE artifacts
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
